@@ -1,0 +1,7 @@
+/* Rename this file to 'settings'.
+*  Alter settings to match your MongoDB Atlas setup. 
+*/
+
+#define CON_STRING "mongodb+srv://<mongouser:<password>@<mongourl>"
+#define COL_DB_NAME "NEW_DATABASE_NAME"
+#define COL_NAME "NEW_COLLECTION_NAME"

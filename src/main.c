@@ -28,9 +28,9 @@
 #include <bson/bson.h>
 #include "../settings"
 
+void create_new_doc(mongoc_collection_t *collection);
 void print_count (mongoc_collection_t *collection, bson_t *filter);
 void list_posts(mongoc_collection_t *collection);
-
 
 int main()
 {
@@ -43,7 +43,6 @@ int main()
 
    mongoc_init ();
    client = mongoc_client_new(CON_STRING);
-   database = mongoc_client_get_database (client, DB_NAME);
    collection = mongoc_client_get_collection (client, COL_DB_NAME, COL_NAME);
 
    list_posts(collection);
@@ -51,9 +50,8 @@ int main()
    // Call this to create a new post in the db
    //create_new_doc(collection);
 
-//   mongoc_collection_destroy (collection);
-//   mongoc_database_destroy (database);
-//   mongoc_client_destroy (client);
+   mongoc_collection_destroy (collection);
+   mongoc_client_destroy (client);
    mongoc_cleanup ();
 
    return 0; 
