@@ -4,9 +4,15 @@
  * @brief 
  * Test connection to cloud MongoDB instance.
  * 
- * $ gcc -o main src/main.c $(pkg-config --libs --cflags libmongoc-1.0) && ./main 
+ * To compile on Fedora, install mongo-c-driver-devel;
+ *  
+ * sudo dnf install mongo-c-driver-devel
+ * 
+ * Then compile;
+ * 
+ * gcc -o main src/main.c $(pkg-config --libs --cflags libmongoc-1.0) && ./main 
  * or
- * $ gcc -o mongodb_test src/main.c -I/usr/include/libbson-1.0 -I/usr/include/libmongoc-1.0 -lmongoc-1.0 -lbson-1.0
+ * gcc -o mongodb_test src/main.c -I/usr/include/libbson-1.0 -I/usr/include/libmongoc-1.0 -lmongoc-1.0 -lbson-1.0
  * 
  * TODO:
  * Makefile is broken, it doesn't make a working binary.
