@@ -29,7 +29,7 @@
 #include <mongoc/mongoc.h>
 #include <bson/bson.h>
 #include "main.h"
-#include <ping.h>
+//#include <ping.h>
 #include "../settings"
 
 #define MAX_DBLIST_LENGTH 10
@@ -53,7 +53,7 @@ int main()
 
    //database = mongoc_client_get_database (client, "test_database_1");
 
-   int p = ping();
+   //int p = ping();
    //create_new_doc(collection);
 
    char *posts_array;

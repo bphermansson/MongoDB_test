@@ -9,3 +9,7 @@ settings
 main
 mongodb_test
 
+a.out
+obj/
+myapp
+main.d
