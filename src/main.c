@@ -16,6 +16,8 @@
  * 
  * TODO:
  * Makefile is broken, it doesn't make a working binary.
+ * Add note about IP access list (Your external IP has to be listed in the MongoDB cloud, else you wont be able to connect.)
+ * 
  * 
  * @version 0.1
  * @date 2022-03-24
@@ -28,27 +30,33 @@
 #include <bson/bson.h>
 #include "../settings"
 
+#define MAX_DBLIST_LENGTH 10
+
 void create_new_doc(mongoc_collection_t *collection);
 void print_count (mongoc_collection_t *collection, bson_t *filter);
-void list_posts(mongoc_collection_t *collection);
+void list_posts(mongoc_collection_t *collection, char **posts_array);
 
 int main()
 {
-   mongoc_database_t *database;
    mongoc_client_t *client;
    mongoc_collection_t *collection;
-   int64_t count;
-   bson_error_t error;
-   bson_t *filter;
 
    mongoc_init ();
    client = mongoc_client_new(CON_STRING);
    collection = mongoc_client_get_collection (client, COL_DB_NAME, COL_NAME);
 
-   list_posts(collection);
-
-   // Call this to create a new post in the db
    //create_new_doc(collection);
+
+   char *posts_array;
+   posts_array = NULL;
+   int length = 100;
+   posts_array = malloc(length * sizeof(char));
+
+   list_posts(collection, &posts_array);
+
+   for (int i = 0 ; i < length ; i++)
+      printf("%d ", posts_array[i]);
+   printf("\n");
 
    mongoc_collection_destroy (collection);
    mongoc_client_destroy (client);
@@ -74,7 +82,7 @@ void create_new_doc(mongoc_collection_t *collection)
    }
 }
 
-void list_posts(mongoc_collection_t *collection)
+void list_posts(mongoc_collection_t *collection, char **posts_array)
 {
    mongoc_cursor_t *cursor;
    const bson_t *doc;
@@ -83,11 +91,15 @@ void list_posts(mongoc_collection_t *collection)
    query = bson_new ();
    cursor = mongoc_collection_find_with_opts (collection, query, NULL, NULL);
 
+   int c=0;
    while (mongoc_cursor_next (cursor, &doc)) {
       str = bson_as_canonical_extended_json (doc, NULL);
       printf ("%s\n", str);
+      posts_array[c] = str;
       bson_free (str);
+      c++;
    }
+   printf("Nr of posts: %d\n", c);
    bson_destroy (query);
    mongoc_cursor_destroy (cursor);
 }
