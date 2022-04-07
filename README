@@ -1,3 +1,8 @@
 This projects is a place for learning and showing how to work with MongoDB in a C application.
 
-Rename 'settings copy' to 'settings' and adjust the settings to match your MongoDB account.
+To use the code: 
+- Go to https://cloud.mongodb.com and create an account, the free tier will do. Then create a database in the 
+  Atlas section. Instructions for this are at https://www.mongodb.com/basics/mongodb-atlas-tutorial. 
+- Rename 'settings copy' to 'settings' and adjust the settings to match your MongoDB account.
+- Your external IP has to be listed in the MongoDB cloud, else you wont be able to connect. Login to your 
+  MongoDB cloud and select "Security/Quickstart". Scroll down and add your IP to the IP Access List. 
