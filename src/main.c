@@ -13,10 +13,11 @@
  * gcc -o main src/main.c $(pkg-config --libs --cflags libmongoc-1.0) && ./main 
  * or
  * gcc -o mongodb_test src/main.c -I/usr/include/libbson-1.0 -I/usr/include/libmongoc-1.0 -lmongoc-1.0 -lbson-1.0
+ * or
+ * gcc -g -O0 -Wall -Wextra -Wshadow -Wnon-virtual-dtor -pedantic -o main src/main.c $(pkg-config --libs --cflags libmongoc-1.0) && ./main 
  * 
  * TODO:
  * Makefile is broken, it doesn't make a working binary.
- * Add note about IP access list (Your external IP has to be listed in the MongoDB cloud, else you wont be able to connect.)
  * 
  * 
  * @version 0.1
@@ -25,16 +26,17 @@
  * @copyright Copyright (c) 2022
  * 
  */
-//#include "main.h"
 #include <mongoc/mongoc.h>
 #include <bson/bson.h>
+#include "main.h"
+#include <ping.h>
 #include "../settings"
 
 #define MAX_DBLIST_LENGTH 10
 
-void create_new_doc(mongoc_collection_t *collection);
+//void create_new_doc(mongoc_collection_t *collection);
 void print_count (mongoc_collection_t *collection, bson_t *filter);
-void list_posts(mongoc_collection_t *collection, char **posts_array);
+//void list_posts(mongoc_collection_t *collection, char **posts_array);
 
 int main()
 {
@@ -44,7 +46,14 @@ int main()
    mongoc_init ();
    client = mongoc_client_new(CON_STRING);
    collection = mongoc_client_get_collection (client, COL_DB_NAME, COL_NAME);
+   mongoc_client_set_appname (client, "connect-example");
 
+
+
+
+   //database = mongoc_client_get_database (client, "test_database_1");
+
+   int p = ping();
    //create_new_doc(collection);
 
    char *posts_array;
@@ -52,11 +61,14 @@ int main()
    int length = 100;
    posts_array = malloc(length * sizeof(char));
 
-   list_posts(collection, &posts_array);
+   uint8_t no_of_posts = list_posts(collection, &posts_array);
+   printf("Done listing\n");
+   printf("Found %d items.\n", no_of_posts);
 
-   for (int i = 0 ; i < length ; i++)
-      printf("%d ", posts_array[i]);
-   printf("\n");
+   //for (int i = 0 ; i < sizeof(posts_array) ; i++)
+   for (int i = 0 ; i < 3 ; i++)
+      printf("%d - %d ", i, posts_array[i]);
+   printf("---\n");
 
    mongoc_collection_destroy (collection);
    mongoc_client_destroy (client);
@@ -82,7 +94,7 @@ void create_new_doc(mongoc_collection_t *collection)
    }
 }
 
-void list_posts(mongoc_collection_t *collection, char **posts_array)
+int list_posts(mongoc_collection_t *collection, char **posts_array)
 {
    mongoc_cursor_t *cursor;
    const bson_t *doc;
@@ -94,7 +106,7 @@ void list_posts(mongoc_collection_t *collection, char **posts_array)
    int c=0;
    while (mongoc_cursor_next (cursor, &doc)) {
       str = bson_as_canonical_extended_json (doc, NULL);
-      printf ("%s\n", str);
+      printf ("%d - %s\n", c, str);
       posts_array[c] = str;
       bson_free (str);
       c++;
@@ -102,4 +114,5 @@ void list_posts(mongoc_collection_t *collection, char **posts_array)
    printf("Nr of posts: %d\n", c);
    bson_destroy (query);
    mongoc_cursor_destroy (cursor);
+   return c;
 }
