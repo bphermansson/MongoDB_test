@@ -54,7 +54,11 @@ int main()
    //database = mongoc_client_get_database (client, "test_database_1");
 
    //int p = ping();
-   //create_new_doc(collection);
+   
+   char *key = "testkey";
+   char *data = "testdata";
+
+   create_new_doc(collection, key, data);
 
    char *posts_array;
    posts_array = NULL;
@@ -77,7 +81,7 @@ int main()
    return 0; 
 }
 
-void create_new_doc(mongoc_collection_t *collection)
+void create_new_doc(mongoc_collection_t *collection, char *key, char *data)
 {
    bson_error_t error;
    bson_oid_t oid;
@@ -86,7 +90,7 @@ void create_new_doc(mongoc_collection_t *collection)
    doc = bson_new ();
    bson_oid_init (&oid, NULL);
    BSON_APPEND_OID (doc, "_id", &oid);
-   BSON_APPEND_UTF8 (doc, "Hello", "world!");
+   BSON_APPEND_UTF8 (doc, key, data);
 
    if (!mongoc_collection_insert_one (collection, doc, NULL, NULL, &error)) 
    {
