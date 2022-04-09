@@ -17,7 +17,8 @@
  * gcc -g -O0 -Wall -Wextra -Wshadow -Wnon-virtual-dtor -pedantic -o main src/main.c $(pkg-config --libs --cflags libmongoc-1.0) && ./main 
  * 
  * TODO:
- * Makefile is broken, it doesn't make a working binary.
+ * Makefile is broken, it doesn't make a working binary. Or?
+ * Code Runner settings?
  * 
  * 
  * @version 0.1
@@ -48,15 +49,18 @@ int main()
    collection = mongoc_client_get_collection (client, COL_DB_NAME, COL_NAME);
    mongoc_client_set_appname (client, "connect-example");
 
+   printf("Enter data to add to db. Just press enter if you don't want to add anything: ");
+   char *key[100], *data;  
+   int buffsize = 100;
+   fgets(key, buffsize, stdin);
+   key[strcspn(key, "\n")] = 0;    // Remove trailing newline
+   printf("%s", key);
 
 
 
-   //database = mongoc_client_get_database (client, "test_database_1");
-
-   //int p = ping();
-   
-   char *key = "testkey";
-   char *data = "testdata";
+   exit(0);
+   //char *key = "testkey";
+   //char *data = "testdata";
 
    create_new_doc(collection, key, data);
 
