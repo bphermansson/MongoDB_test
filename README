@@ -6,3 +6,8 @@ To use the code:
 - Rename 'settings copy' to 'settings' and adjust the settings to match your MongoDB account.
 - Your external IP has to be listed in the MongoDB cloud, else you wont be able to connect. Login to your 
   MongoDB cloud and select "Security/Quickstart". Scroll down and add your IP to the IP Access List. 
+
+Settings:
+#define COL_DB_NAME "myFirstDatabase" - Name of the database to work with.
+Doesn't have to exist before you write to it.
+#define COL_NAME "Cluster0" - The cluster in the database to write to. 
