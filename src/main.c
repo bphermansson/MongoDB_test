@@ -14,7 +14,7 @@
  * or
  * gcc -o mongodb_test src/main.c -I/usr/include/libbson-1.0 -I/usr/include/libmongoc-1.0 -lmongoc-1.0 -lbson-1.0
  * or
- * gcc -g -O0 -Wall -Wextra -Wshadow -Wnon-virtual-dtor -pedantic -o main src/main.c $(pkg-config --libs --cflags libmongoc-1.0) && ./main 
+ * gcc -g -O0 -Wall -Wextra -Wshadow -pedantic -o main src/main.c $(pkg-config --libs --cflags libmongoc-1.0) && ./main 
  * 
  * TODO:
  * Makefile is broken, it doesn't make a working binary. Or?
@@ -34,6 +34,7 @@
 #include "../settings"
 
 #define MAX_DBLIST_LENGTH 10
+#define BUFFSIZE 100
 
 //void create_new_doc(mongoc_collection_t *collection);
 void print_count (mongoc_collection_t *collection, bson_t *filter);
@@ -50,17 +51,19 @@ int main()
    mongoc_client_set_appname (client, "connect-example");
 
    printf("Enter data to add to db. Just press enter if you don't want to add anything: ");
-   char *key[100], *data;  
-   int buffsize = 100;
-   fgets(key, buffsize, stdin);
+
+   char *key, *data;  
+   key = (char *) malloc(BUFFSIZE);
+   data = (char *) malloc(BUFFSIZE);
+
+   fgets(key, BUFFSIZE, stdin);
    key[strcspn(key, "\n")] = 0;    // Remove trailing newline
    printf("%s", key);
 
+   fgets(data, BUFFSIZE, stdin);
 
-
-   exit(0);
-   //char *key = "testkey";
-   //char *data = "testdata";
+   data[strcspn(data, "\n")] = 0;    // Remove trailing newline
+   printf("%s", data);
 
    create_new_doc(collection, key, data);
 
@@ -87,6 +90,8 @@ int main()
 
 void create_new_doc(mongoc_collection_t *collection, char *key, char *data)
 {
+   printf("Create new item %s %s", key, data);
+
    bson_error_t error;
    bson_oid_t oid;
    bson_t *doc;
