@@ -50,36 +50,45 @@ int main()
    collection = mongoc_client_get_collection (client, COL_DB_NAME, COL_NAME);
    mongoc_client_set_appname (client, "connect-example");
 
-   printf("Enter data to add to db. Just press enter if you don't want to add anything: ");
+   printf("Enter data to add to db. Just press enter if you don't want to add anything.\n ");
 
-   char *key, *data;  
+   char *key;  
    key = (char *) malloc(BUFFSIZE);
-   data = (char *) malloc(BUFFSIZE);
 
+   printf("Enter key: ");
    fgets(key, BUFFSIZE, stdin);
    key[strcspn(key, "\n")] = 0;    // Remove trailing newline
-   printf("%s", key);
+   //printf("%s\n", key);
 
-   fgets(data, BUFFSIZE, stdin);
+   if(strlen(key) > 0)
+   {
+      printf("Enter data: ");
+      char *data;
+      data = (char *) malloc(BUFFSIZE);
+      fgets(data, BUFFSIZE, stdin);
+      data[strcspn(data, "\n")] = 0;
+      //printf("%s\n", data);
+      create_new_doc(collection, key, data);
+      free(data);
+   }
+   else 
+   {
+      printf("List current posts\n");
+      char *posts_array;
+      posts_array = NULL;
+      int length = 100;
+      posts_array = malloc(length * sizeof(char));
 
-   data[strcspn(data, "\n")] = 0;    // Remove trailing newline
-   printf("%s", data);
+      uint8_t no_of_posts = list_posts(collection, &posts_array);
+      printf("Done listing\n");
 
-   create_new_doc(collection, key, data);
+      //for (int i = 0 ; i < sizeof(posts_array) ; i++)
+      for (int i = 0 ; i < 3 ; i++)
+         printf("%d - %d ", i, posts_array[i]);
+      printf("---\n");
+   }
 
-   char *posts_array;
-   posts_array = NULL;
-   int length = 100;
-   posts_array = malloc(length * sizeof(char));
 
-   uint8_t no_of_posts = list_posts(collection, &posts_array);
-   printf("Done listing\n");
-   printf("Found %d items.\n", no_of_posts);
-
-   //for (int i = 0 ; i < sizeof(posts_array) ; i++)
-   for (int i = 0 ; i < 3 ; i++)
-      printf("%d - %d ", i, posts_array[i]);
-   printf("---\n");
 
    mongoc_collection_destroy (collection);
    mongoc_client_destroy (client);
@@ -116,14 +125,28 @@ int list_posts(mongoc_collection_t *collection, char **posts_array)
    query = bson_new ();
    cursor = mongoc_collection_find_with_opts (collection, query, NULL, NULL);
 
+
+   //char *key;  
+   //key = (char *) malloc(BUFFSIZE);
+int *b = (int*)malloc(sizeof(int)*4);
+
+   b[2] = 6;
+
    int c=0;
    while (mongoc_cursor_next (cursor, &doc)) {
       str = bson_as_canonical_extended_json (doc, NULL);
-      printf ("%d - %s\n", c, str);
-      posts_array[c] = str;
+      //printf ("%d - %s\n", c, str);
+     // posts_array[c] = str;
+  // memcpy(b, str, sizeof(int)*4);
+
+      //key[c] = str;
+     // strcpy(key[c], str);
+
       bson_free (str);
       c++;
    }
+   printf("P: %c\n", b[2]);
+   
    printf("Nr of posts: %d\n", c);
    bson_destroy (query);
    mongoc_cursor_destroy (cursor);
