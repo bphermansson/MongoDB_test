@@ -10,6 +10,6 @@ main
 mongodb_test
 
 a.out
-obj/
+obj/*
 myapp
 main.d
