@@ -31,6 +31,7 @@
 #include <bson/bson.h>
 #include "main.h"
 //#include <ping.h>
+#include <create_new_doc.h>
 #include "../settings"
 
 #define MAX_DBLIST_LENGTH 10
@@ -66,9 +67,8 @@ int main()
    printf("Enter key: ");
    fgets(key, BUFFSIZE, stdin);
    key[strcspn(key, "\n")] = 0;    // Remove trailing newline
-   //printf("%s\n", key);
 
-   if(strlen(key) > 0)
+   if(strlen(key) > 0)     // A key is entered, go ahead with adding data.
    {
       printf("Enter data: ");
       char *data;
@@ -100,11 +100,9 @@ int main()
 
       //for (int i = 0 ; i < sizeof(posts_array) ; i++)
       for (int i = 0 ; i < 3 ; i++)
-         //printf("%d - %d ", i, posts_array[i]);
+        // printf("%d - %d ", i, posts_array[i]);
       printf("---\n");
    }
-
-
 
    mongoc_collection_destroy (collection);
    mongoc_client_destroy (client);
@@ -113,24 +111,6 @@ int main()
    return 0; 
 }
 
-void create_new_doc(mongoc_collection_t *collection, char *key, char *data)
-{
-   printf("Create new item %s %s", key, data);
-
-   bson_error_t error;
-   bson_oid_t oid;
-   bson_t *doc;
-
-   doc = bson_new ();
-   bson_oid_init (&oid, NULL);
-   BSON_APPEND_OID (doc, "_id", &oid);
-   BSON_APPEND_UTF8 (doc, key, data);
-
-   if (!mongoc_collection_insert_one (collection, doc, NULL, NULL, &error)) 
-   {
-      fprintf (stderr, "%s\n", error.message);
-   }
-}
 
 int list_posts(mongoc_collection_t *collection, char **posts_array)
 {
