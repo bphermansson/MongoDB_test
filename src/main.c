@@ -31,6 +31,7 @@
 #include "main.h"
 //#include <ping.h>
 #include "../settings"
+#include <jsmn.h>
 
 #define MAX_DBLIST_LENGTH 10
 
@@ -61,7 +62,7 @@ int main()
    int length = 100;
    posts_array = malloc(length * sizeof(char));
 
-   uint8_t no_of_posts = list_posts(collection, &posts_array);
+   uint8_t no_of_posts = list_posts(collection, &posts_array, length);
    printf("Done listing\n");
    printf("Found %d items.\n", no_of_posts);
 
@@ -94,8 +95,10 @@ void create_new_doc(mongoc_collection_t *collection)
    }
 }
 
-int list_posts(mongoc_collection_t *collection, char **posts_array)
+int list_posts(mongoc_collection_t *collection, char **posts_array, int length)
 {
+   printf("In list_posts\n");
+
    mongoc_cursor_t *cursor;
    const bson_t *doc;
    bson_t *query;
@@ -103,16 +106,65 @@ int list_posts(mongoc_collection_t *collection, char **posts_array)
    query = bson_new ();
    cursor = mongoc_collection_find_with_opts (collection, query, NULL, NULL);
 
+
+
+#define NUM_STRINGS 10
+char *arr3[NUM_STRINGS] = {0};
+    arr3[9] = "hello there";
+
+
+   free(*posts_array);
+   posts_array = malloc(length * sizeof(char));
+   if (*posts_array == NULL)
+   {
+      return 1;
+   }
+
    int c=0;
    while (mongoc_cursor_next (cursor, &doc)) {
       str = bson_as_canonical_extended_json (doc, NULL);
       printf ("%d - %s\n", c, str);
-      posts_array[c] = str;
+      //(*posts_array)[c] = str;
+      //arr3[c] = str;
+      //strncpy(arr3[1], str, 100);
       bson_free (str);
       c++;
    }
+
+// Json
+ jsmn_parser p;
+   int r, i;
+static const char *JSON_STRING =
+    "{\"user\": \"johndoe\", \"admin\": false, \"uid\": 1000,\n  "
+    "\"groups\": [\"users\", \"wheel\", \"audio\", \"video\"]}";
+
+  jsmntok_t t[128]; 
+  jsmn_init(&p);
+  r = jsmn_parse(&p, str, strlen(str), t,
+                 sizeof(t) / sizeof(t[0]));
+  if (r < 0) {
+    printf("Failed to parse JSON: %d\n", r);
+    return 1;
+  }
+  for (i = 1; i < r; i++) {
+        printf("- User: %.*s\n", t[i + 1].end - t[i + 1].start,
+             JSON_STRING + t[i + 1].start);
+  }
+ printf("Parsed JSON: %d\n", r);
+for (int i = 0; i < NUM_STRINGS; ++i) {
+        printf("%s, ", arr3[i]);
+    }
+    printf("\n");
+
    printf("Nr of posts: %d\n", c);
    bson_destroy (query);
    mongoc_cursor_destroy (cursor);
    return c;
 }
+
+#define SIZE 100
+struct my_object {
+    char text[SIZE];
+    bool flag;
+    int count;
+};
