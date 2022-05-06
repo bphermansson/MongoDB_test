@@ -1,16 +1,9 @@
-
-typedef struct 
-{
-    uint8_t state;
-    uint8_t pin_number;
-    uint8_t nr_of_con_reads;
-    bool initialized;
-    uint8_t level;
-    uint8_t prev_level;
-    uint8_t edge;
-} btn_struct;
-static btn_struct debouncer_btns[MAX_NO_OF_BTNS];
-
+#include <stddef.h>
+#include <stdio.h>
+#include <stdbool.h>
+#include <ping.h>
+#include <mongoc/mongoc.h>
+#include <bson/bson.h>
 
 int ping()
 {

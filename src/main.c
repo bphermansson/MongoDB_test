@@ -30,8 +30,8 @@
 #include <mongoc/mongoc.h>
 #include <bson/bson.h>
 #include "main.h"
-//#include <ping.h>
-#include <create_new_doc.h>
+#include <ping.h>
+//#include <create_new_doc.h>
 #include "../settings"
 
 #define MAX_DBLIST_LENGTH 10
@@ -59,6 +59,8 @@ int main()
    collection = mongoc_client_get_collection (client, COL_DB_NAME, COL_NAME);
    mongoc_client_set_appname (client, "connect-example");
 
+ping();
+
    printf("Enter data to add to db. Just press enter if you don't want to add anything.\n ");
 
    char *key;  
@@ -76,7 +78,7 @@ int main()
       fgets(data, BUFFSIZE, stdin);
       data[strcspn(data, "\n")] = 0;
       //printf("%s\n", data);
-      create_new_doc(collection, key, data);
+      //create_new_doc(collection, key, data);
       free(data);
    }
    else 
