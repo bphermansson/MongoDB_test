@@ -10,11 +10,11 @@
  * 
  * Then compile;
  * 
- * gcc -o main src/main.c $(pkg-config --libs --cflags libmongoc-1.0) && ./main 
- * or
- * gcc -o mongodb_test src/main.c -I/usr/include/libbson-1.0 -I/usr/include/libmongoc-1.0 -lmongoc-1.0 -lbson-1.0
- * or
  * gcc -g -O0 -Wall -Wextra -Wshadow -Wnon-virtual-dtor -pedantic -o main src/main.c $(pkg-config --libs --cflags libmongoc-1.0) && ./main 
+ * 
+ * 
+ * 
+ * gcc -Wall src/main.c lib/ping/ping.c -o main  -Ilib -Ilib/ping -I/usr/include/libbson-1.0 -I/usr/include/libmongoc-1.0 -lmongoc-1.0 -lbson-1.0
  * 
  * TODO:
  * Makefile is broken, it doesn't make a working binary.
@@ -29,9 +29,8 @@
 #include <mongoc/mongoc.h>
 #include <bson/bson.h>
 #include "main.h"
-//#include <ping.h>
+#include <ping/ping.h>
 #include "../settings"
-#include <jsmn.h>
 
 #define MAX_DBLIST_LENGTH 10
 
@@ -49,7 +48,7 @@ int main()
    collection = mongoc_client_get_collection (client, COL_DB_NAME, COL_NAME);
    mongoc_client_set_appname (client, "connect-example");
 
-
+ping();
 
 
    //database = mongoc_client_get_database (client, "test_database_1");
@@ -130,41 +129,5 @@ char *arr3[NUM_STRINGS] = {0};
       bson_free (str);
       c++;
    }
-
-// Json
- jsmn_parser p;
-   int r, i;
-static const char *JSON_STRING =
-    "{\"user\": \"johndoe\", \"admin\": false, \"uid\": 1000,\n  "
-    "\"groups\": [\"users\", \"wheel\", \"audio\", \"video\"]}";
-
-  jsmntok_t t[128]; 
-  jsmn_init(&p);
-  r = jsmn_parse(&p, str, strlen(str), t,
-                 sizeof(t) / sizeof(t[0]));
-  if (r < 0) {
-    printf("Failed to parse JSON: %d\n", r);
-    return 1;
-  }
-  for (i = 1; i < r; i++) {
-        printf("- User: %.*s\n", t[i + 1].end - t[i + 1].start,
-             JSON_STRING + t[i + 1].start);
-  }
- printf("Parsed JSON: %d\n", r);
-for (int i = 0; i < NUM_STRINGS; ++i) {
-        printf("%s, ", arr3[i]);
-    }
-    printf("\n");
-
-   printf("Nr of posts: %d\n", c);
-   bson_destroy (query);
-   mongoc_cursor_destroy (cursor);
-   return c;
+   return 0;
 }
-
-#define SIZE 100
-struct my_object {
-    char text[SIZE];
-    bool flag;
-    int count;
-};

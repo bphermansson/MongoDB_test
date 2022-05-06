@@ -5,7 +5,7 @@
 # Compiler settings - Can be customized.
 CC = gcc
 #CXXFLAGS = -std=c11 -Wall
-CXXFLAGS = -g -O0 -Wall -Wextra -Wshadow -pedantic -I/usr/include/libbson-1.0 -I/usr/include/libmongoc-1.0 -Ilib -lmongoc-1.0 -lbson-1.0
+CXXFLAGS = -g -O0 -Wall -Wextra -Wshadow -pedantic -Ilib -Ilib/ping -I/usr/include/libbson-1.0 -I/usr/include/libmongoc-1.0 -lmongoc-1.0 -lbson-1.0 
 LDFLAGS = 
 LDLIBS =
 
