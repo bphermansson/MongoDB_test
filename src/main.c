@@ -56,6 +56,7 @@ int main()
    }
 
 
+
    //database = mongoc_client_get_database (client, "test_database_1");
 
    //int p = ping();
@@ -66,7 +67,8 @@ int main()
    int length = 100;
    posts_array = malloc(length * sizeof(char));
 
-   uint8_t no_of_posts = list_posts(collection, &posts_array, length);
+   uint8_t no_of_posts = list_all_posts(collection, &posts_array, length);
+
    printf("Done listing\n");
    printf("Found %d items.\n", no_of_posts);
 
@@ -97,34 +99,4 @@ void create_new_doc(mongoc_collection_t *collection)
    {
       fprintf (stderr, "%s\n", error.message);
    }
-}
-
-int list_posts(mongoc_collection_t *collection, char **posts_array, int length)
-{
-   printf("In list_posts\n");
-
-   mongoc_cursor_t *cursor;
-   const bson_t *doc;
-   bson_t *query;
-   char *str;
-   query = bson_new ();
-   cursor = mongoc_collection_find_with_opts (collection, query, NULL, NULL);
-
-   #define NUM_STRINGS 10
-
-   free(*posts_array);
-   posts_array = malloc(length * sizeof(char));
-   if (*posts_array == NULL)
-   {
-      return 1;
-   }
-
-   int c=0;
-   while (mongoc_cursor_next (cursor, &doc)) {
-      str = bson_as_canonical_extended_json (doc, NULL);
-      printf ("%d - %s\n", c, str);
-      bson_free (str);
-      c++;
-   }
-   return c;
 }
