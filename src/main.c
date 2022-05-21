@@ -48,19 +48,11 @@ int main()
    collection = mongoc_client_get_collection (client, COL_DB_NAME, COL_NAME);
    mongoc_client_set_appname (client, "connect-example");
 
-   //uint8_t pingres = ping();
    if (ping() != 1)
    {
-      printf("Ping dataase failed, check your settings!\n");
+      printf("Ping database failed, check your settings!\n");
       exit(1);
    }
-
-
-
-   //database = mongoc_client_get_database (client, "test_database_1");
-
-   //int p = ping();
-   //create_new_doc(collection);
 
    char *posts_array;
    posts_array = NULL;
@@ -72,7 +64,6 @@ int main()
    printf("Done listing\n");
    printf("Found %d items.\n", no_of_posts);
 
-   //for (int i = 0 ; i < sizeof(posts_array) ; i++)
    for (int i = 0 ; i < 3 ; i++)
       printf("%d - %d ", i, posts_array[i]);
    printf("---\n");
