@@ -29,7 +29,7 @@
 #include <mongoc/mongoc.h>
 #include <bson/bson.h>
 #include "main.h"
-#include <ping/ping.h>
+#include <ping.h>
 #include "../settings"
 
 #define MAX_DBLIST_LENGTH 10
@@ -48,7 +48,12 @@ int main()
    collection = mongoc_client_get_collection (client, COL_DB_NAME, COL_NAME);
    mongoc_client_set_appname (client, "connect-example");
 
-ping();
+   //uint8_t pingres = ping();
+   if (ping() != 1)
+   {
+      printf("Ping dataase failed, check your settings!\n");
+      exit(1);
+   }
 
 
    //database = mongoc_client_get_database (client, "test_database_1");
@@ -105,12 +110,7 @@ int list_posts(mongoc_collection_t *collection, char **posts_array, int length)
    query = bson_new ();
    cursor = mongoc_collection_find_with_opts (collection, query, NULL, NULL);
 
-
-
-#define NUM_STRINGS 10
-char *arr3[NUM_STRINGS] = {0};
-    arr3[9] = "hello there";
-
+   #define NUM_STRINGS 10
 
    free(*posts_array);
    posts_array = malloc(length * sizeof(char));
@@ -123,11 +123,8 @@ char *arr3[NUM_STRINGS] = {0};
    while (mongoc_cursor_next (cursor, &doc)) {
       str = bson_as_canonical_extended_json (doc, NULL);
       printf ("%d - %s\n", c, str);
-      //(*posts_array)[c] = str;
-      //arr3[c] = str;
-      //strncpy(arr3[1], str, 100);
       bson_free (str);
       c++;
    }
-   return 0;
+   return c;
 }

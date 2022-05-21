@@ -4,70 +4,21 @@
 
 # Compiler settings - Can be customized.
 CC = gcc
-#CXXFLAGS = -std=c11 -Wall
-CXXFLAGS = -g -O0 -Wall -Wextra -Wshadow -pedantic -Ilib -Ilib/ping -I/usr/include/libbson-1.0 -I/usr/include/libmongoc-1.0 -lmongoc-1.0 -lbson-1.0 
+CFLAGS = -Wall -I./lib/ping -I/usr/include/libbson-1.0 -I/usr/include/libmongoc-1.0 -lmongoc-1.0 -lbson-1.0 -ljansson
+#CXXFLAGS = -g -O0 -Wextra -Wshadow -pedantic -Ilib -Ilib/ping -I/usr/include/libbson-1.0 -I/usr/include/libmongoc-1.0 -lmongoc-1.0 -lbson-1.0 
+OBJ = lib/ping/ping.c src/main.c
+objects = obj/*
+
 LDFLAGS = 
 LDLIBS =
 
-# Makefile settings - Can be customized.
-APPNAME = myapp
-EXT = .c
-SRCDIR = src
-OBJDIR = obj
-INC_DIR = lib
 
+%.o: %.c $(DEPS)
+	$(CC) $(CFLAGS) -c -o $@ $<
 
-############## Do not change anything from here downwards! #############
-SRC = $(wildcard $(SRCDIR)/*$(EXT))
-OBJ = $(SRC:$(SRCDIR)/%$(EXT)=$(OBJDIR)/%.o)
-DEP = $(OBJ:$(OBJDIR)/%.o=%.d)
-# UNIX-based OS variables & settings
-RM = rm
-DELOBJ = $(OBJ)
-# Windows OS variables & settings
-DEL = del
-EXE = .exe
-WDELOBJ = $(SRC:$(SRCDIR)/%$(EXT)=$(OBJDIR)\\%.o)
+mongodemo: $(OBJ)
+	gcc $(CFLAGS) -o $@ $^
 
-########################################################################
-####################### Targets beginning here #########################
-########################################################################
-
-all: $(APPNAME)
-
-# Builds the app
-$(APPNAME): $(OBJ)
-	$(CC) $(CXXFLAGS) -o $@ $^ $(LDFLAGS)
-
-# Creates the dependecy rules
-%.d: $(SRCDIR)/%$(EXT)
-	@$(CPP) $(CFLAGS) $< -MM -MT $(@:%.d=$(OBJDIR)/%.o) >$@
-
-# Includes all .h files
--include $(DEP)
-
-# Building rule for .o files and its .c/.cpp in combination with all .h
-$(OBJDIR)/%.o: $(SRCDIR)/%$(EXT)
-	$(CC) $(CXXFLAGS) -o $@ -c $<
-
-################### Cleaning rules for Unix-based OS ###################
-# Cleans complete project
-.PHONY: clean
-clean:
-	$(RM) $(DELOBJ) $(DEP) $(APPNAME)
-
-# Cleans only all files with the extension .d
-.PHONY: cleandep
-cleandep:
-	$(RM) $(DEP)
-
-#################### Cleaning rules for Windows OS #####################
-# Cleans complete project
-.PHONY: cleanw
-cleanw:
-	$(DEL) $(WDELOBJ) $(DEP) $(APPNAME)$(EXE)
-
-# Cleans only all files with the extension .d
-.PHONY: cleandepw
-cleandepw:
-	$(DEL) $(DEP)
+.PHONY : clean
+clean :
+	-rm mongodemo $(objects)
